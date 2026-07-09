@@ -1,0 +1,23 @@
+# Binaries
+covscan
+/tmp/covscan
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/covscan
+*.exe
+*.test
+*.out
+/tmp/
+
+# Dependencies
+vendor/
