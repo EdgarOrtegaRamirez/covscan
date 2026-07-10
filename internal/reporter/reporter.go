@@ -138,20 +138,20 @@ func (j *JSONReporter) Report(report *model.CoverageReport) int {
 // Format returns the coverage report as JSON strings.
 func (j *JSONReporter) Format(report *model.CoverageReport) []string {
 	type fileJSON struct {
-		File           string  `json:"file"`
-		TotalLines     int     `json:"total_lines"`
-		CoveredLines   int     `json:"covered_lines"`
-		LineCoverage   float64 `json:"line_coverage"`
-		TotalBranches  int     `json:"total_branches,omitempty"`
-		CoveredBranches int    `json:"covered_branches,omitempty"`
+		File            string  `json:"file"`
+		TotalLines      int     `json:"total_lines"`
+		CoveredLines    int     `json:"covered_lines"`
+		LineCoverage    float64 `json:"line_coverage"`
+		TotalBranches   int     `json:"total_branches,omitempty"`
+		CoveredBranches int     `json:"covered_branches,omitempty"`
 	}
 
 	type reportJSON struct {
-		Name         string    `json:"name"`
-		TotalFiles   int       `json:"total_files"`
-		TotalLines   int       `json:"total_lines"`
-		CoveredLines int       `json:"covered_lines"`
-		LineCoverage float64   `json:"line_coverage"`
+		Name         string     `json:"name"`
+		TotalFiles   int        `json:"total_files"`
+		TotalLines   int        `json:"total_lines"`
+		CoveredLines int        `json:"covered_lines"`
+		LineCoverage float64    `json:"line_coverage"`
 		Files        []fileJSON `json:"files"`
 	}
 

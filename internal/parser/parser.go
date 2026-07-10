@@ -68,11 +68,11 @@ func ParseAuto(path string) (*model.CoverageReport, error) {
 
 // istanbulReport is the top-level Istanbul JSON structure.
 type istanbulFileCoverage struct {
-	Path         string                `json:"path"`
-	StatementMap map[string]istanbulSpan `json:"statementMap"`
-	S            map[string]int          `json:"s"`
+	Path         string                    `json:"path"`
+	StatementMap map[string]istanbulSpan   `json:"statementMap"`
+	S            map[string]int            `json:"s"`
 	BranchMap    map[string]istanbulBranch `json:"branchMap"`
-	B            map[string][]int         `json:"b"`
+	B            map[string][]int          `json:"b"`
 }
 
 type istanbulSpan struct {
@@ -85,9 +85,9 @@ type istanbulSpan struct {
 }
 
 type istanbulBranch struct {
-	Line      int              `json:"line"`
-	Type      string           `json:"type"`
-	Locations []istanbulSpan   `json:"locations"`
+	Line      int            `json:"line"`
+	Type      string         `json:"type"`
+	Locations []istanbulSpan `json:"locations"`
 }
 
 // ParseIstanbul parses an Istanbul JSON coverage report.
@@ -198,7 +198,7 @@ func ParseLCOV(path string) (*model.CoverageReport, error) {
 	}
 
 	files := make(map[string]struct {
-		lines   []lcovLineDA
+		lines    []lcovLineDA
 		branches []lcovBranchDA
 	})
 	var currentFile string

@@ -16,9 +16,9 @@ const (
 
 // FileCoverage holds coverage data for a single file.
 type FileCoverage struct {
-	FilePath     string
-	TotalLines   int
-	CoveredLines int
+	FilePath        string
+	TotalLines      int
+	CoveredLines    int
 	TotalBranches   int
 	CoveredBranches int
 }
@@ -50,10 +50,10 @@ func (f FileCoverage) OverallRate() float64 {
 
 // CoverageReport holds the complete coverage report.
 type CoverageReport struct {
-	Name        string
-	Files       []FileCoverage
-	SourceDir   string
-	HasBranch   bool
+	Name      string
+	Files     []FileCoverage
+	SourceDir string
+	HasBranch bool
 }
 
 // TotalLines sums all file lines.

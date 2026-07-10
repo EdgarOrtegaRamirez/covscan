@@ -1,5 +1,5 @@
-# Binaries
-covscan
+# Binaries (root-level only — must not match cmd/covscan/)
+/covscan
 /tmp/covscan
 
 # IDE

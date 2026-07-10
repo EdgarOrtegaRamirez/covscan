@@ -18,13 +18,13 @@ type ComparisonResult struct {
 
 // FileChange describes how a file's coverage changed between two runs.
 type FileChange struct {
-	FilePath         string
-	OldLines         int
-	NewLines         int
-	OldCovered       int
-	NewCovered       int
-	OldRate          float64
-	NewRate          float64
+	FilePath   string
+	OldLines   int
+	NewLines   int
+	OldCovered int
+	NewCovered int
+	OldRate    float64
+	NewRate    float64
 }
 
 // Compare compares two coverage reports and returns the differences.

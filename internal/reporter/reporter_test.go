@@ -37,7 +37,7 @@ func TestTextReporterFormat(t *testing.T) {
 
 func TestTextReporterFormatWithBranches(t *testing.T) {
 	report := &model.CoverageReport{
-		Name: "test.xml",
+		Name:      "test.xml",
 		HasBranch: true,
 		Files: []model.FileCoverage{
 			{FilePath: "main.go", TotalLines: 100, CoveredLines: 80, TotalBranches: 10, CoveredBranches: 7},

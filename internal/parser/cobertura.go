@@ -11,7 +11,7 @@ import (
 
 // coberturaXml is the root XML element for Cobertura format.
 type coberturaXml struct {
-	XMLName  xml.Name          `xml:"coverage"`
+	XMLName  xml.Name           `xml:"coverage"`
 	Packages []coberturaPackage `xml:"packages>package"`
 }
 
