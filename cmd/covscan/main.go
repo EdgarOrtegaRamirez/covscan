@@ -14,6 +14,7 @@ import (
 var (
 	showAllFiles bool
 	jsonOutput   bool
+	format       string
 	threshold    float64
 	quiet        bool
 )
@@ -54,13 +55,28 @@ LCOV tracefiles (.info, .lcov), Istanbul JSON (.json).`,
 				continue
 			}
 
+			// Determine format: --json overrides --format, default "text"
+			useFormat := format
 			if jsonOutput {
+				useFormat = "json"
+			}
+
+			switch useFormat {
+			case "json":
 				r := &reporter.JSONReporter{}
 				code := r.Report(report)
 				if code != 0 {
 					exitCode = code
 				}
-			} else {
+			case "markdown":
+				r := reporter.NewMarkdownReporter()
+				r.ShowAllFiles = showAllFiles
+				r.Threshold = threshold
+				code := r.Report(report)
+				if code != 0 {
+					exitCode = code
+				}
+			default:
 				r := reporter.NewTextReporter()
 				r.ShowAllFiles = showAllFiles
 				r.Threshold = threshold
@@ -124,7 +140,8 @@ var compareCmd = &cobra.Command{
 
 func init() {
 	coverCmd.Flags().BoolVarP(&showAllFiles, "all", "a", false, "Show per-file breakdown")
-	coverCmd.Flags().BoolVarP(&jsonOutput, "json", "j", false, "Output as JSON")
+	coverCmd.Flags().BoolVarP(&jsonOutput, "json", "j", false, "Output as JSON (deprecated: use --format json)")
+	coverCmd.Flags().StringVar(&format, "format", "text", "Output format: text, json, markdown")
 	coverCmd.Flags().Float64VarP(&threshold, "threshold", "t", 0, "Minimum coverage threshold (exit 1 if below)")
 	coverCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Suppress output, only check threshold")
 

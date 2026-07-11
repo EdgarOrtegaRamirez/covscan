@@ -193,3 +193,123 @@ func (j *JSONReporter) Format(report *model.CoverageReport) []string {
 
 	return lines
 }
+
+// MarkdownReporter outputs coverage data in Markdown format.
+type MarkdownReporter struct {
+	ShowAllFiles bool
+	Threshold    float64
+}
+
+// NewMarkdownReporter creates a new MarkdownReporter.
+func NewMarkdownReporter() *MarkdownReporter {
+	return &MarkdownReporter{
+		ShowAllFiles: false,
+		Threshold:    0.0,
+	}
+}
+
+// Report writes the coverage report as Markdown to stdout.
+func (r *MarkdownReporter) Report(report *model.CoverageReport) int {
+	lines := r.Format(report)
+	for _, line := range lines {
+		fmt.Println(line)
+	}
+
+	coveragePct := report.LineCoverage() * 100
+	if r.Threshold > 0 && coveragePct < r.Threshold {
+		fmt.Fprintf(os.Stderr, "\n❌ Coverage %.1f%% is below threshold %.1f%%\n",
+			coveragePct, r.Threshold)
+		return 1
+	}
+	return 0
+}
+
+// Format returns the coverage report as Markdown-formatted strings.
+func (r *MarkdownReporter) Format(report *model.CoverageReport) []string {
+	var lines []string
+
+	lines = append(lines, fmt.Sprintf("## Coverage Report: %s", report.Name))
+	lines = append(lines, "")
+
+	lineRate := report.LineCoverage()
+	lines = append(lines, fmt.Sprintf("| Metric | Value |"))
+	lines = append(lines, fmt.Sprintf("|--------|-------|"))
+	lines = append(lines, fmt.Sprintf("| **Overall Coverage** | %.1f%% |", lineRate*100))
+	lines = append(lines, fmt.Sprintf("| **Files** | %d |", len(report.Files)))
+	lines = append(lines, fmt.Sprintf("| **Lines** | %d / %d covered |", report.TotalCoveredLines(), report.TotalLines()))
+
+	if report.HasBranch {
+		totalBranches := 0
+		coveredBranches := 0
+		for _, f := range report.Files {
+			totalBranches += f.TotalBranches
+			coveredBranches += f.CoveredBranches
+		}
+		branchRate := float64(0)
+		if totalBranches > 0 {
+			branchRate = float64(coveredBranches) / float64(totalBranches)
+		}
+		lines = append(lines, fmt.Sprintf("| **Branch Coverage** | %.1f%% |", branchRate*100))
+	}
+
+	badge := coverageBadge(lineRate)
+	lines = append(lines, "")
+	lines = append(lines, badge)
+	lines = append(lines, "")
+
+	// Per-directory summary
+	dirs := report.GroupByDir()
+	sort.Slice(dirs, func(i, j int) bool {
+		return dirs[i].DirPath < dirs[j].DirPath
+	})
+	lines = append(lines, "### Per-Directory Summary")
+	lines = append(lines, "")
+	lines = append(lines, "| Directory | Coverage | Files |")
+	lines = append(lines, "|-----------|----------|-------|")
+	for _, d := range dirs {
+		rate := float64(0)
+		if d.TotalLines > 0 {
+			rate = float64(d.CoveredLines) / float64(d.TotalLines)
+		}
+		lines = append(lines, fmt.Sprintf("| `%s` | %.1f%% | %d |",
+			d.DirPath, rate*100, d.FileCount))
+	}
+	lines = append(lines, "")
+
+	// Per-file details
+	if r.ShowAllFiles {
+		sorted := make([]model.FileCoverage, len(report.Files))
+		copy(sorted, report.Files)
+		sort.Slice(sorted, func(i, j int) bool {
+			return sorted[i].FilePath < sorted[j].FilePath
+		})
+
+		lines = append(lines, "### Per-File Breakdown")
+		lines = append(lines, "")
+		lines = append(lines, "| File | Coverage |")
+		lines = append(lines, "|------|----------|")
+		for _, f := range sorted {
+			rate := f.LineRate()
+			lines = append(lines, fmt.Sprintf("| `%s` | %.1f%% |",
+				f.FilePath, rate*100))
+		}
+		lines = append(lines, "")
+	}
+
+	return lines
+}
+
+// coverageBadge generates a Markdown coverage badge.
+func coverageBadge(rate float64) string {
+	pct := rate * 100
+	var color string
+	switch {
+	case pct >= 80:
+		color = "brightgreen"
+	case pct >= 50:
+		color = "yellow"
+	default:
+		color = "red"
+	}
+	return fmt.Sprintf("![Coverage](https://img.shields.io/badge/coverage-%.1f%%25-%s)", pct, color)
+}

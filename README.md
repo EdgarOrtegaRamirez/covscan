@@ -16,7 +16,7 @@
 - **Branch Coverage** — Displays branch coverage when available (LCOV, Cobertura)
 - **Coverage Comparison** — Compare two coverage reports with per-file diffs
 - **CI/CD Mode** — `--threshold 80` exits with code 1 if coverage is below the minimum
-- **Multiple Output Formats** — Text (default) and JSON (`--json`)
+- **Multiple Output Formats** — Text (default), JSON (`--json` or `--format json`), and Markdown (`--format markdown`)
 - **Compact Summary** — One-line per-file summary with `covscan summary`
 
 ## Installation
@@ -46,6 +46,9 @@ covscan cover cover.out --all
 # View as JSON
 covscan cover cover.out --json
 
+# View as Markdown (great for PR comments)
+covscan cover cover.out --format markdown
+
 # CI/CD: fail if below 80%
 covscan cover cover.out --threshold 80
 
@@ -66,7 +69,8 @@ Parse one or more coverage report files and display coverage statistics.
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
 | `--all` | `-a` | `false` | Show per-file breakdown |
-| `--json` | `-j` | `false` | Output as JSON |
+| `--json` | `-j` | `false` | Output as JSON (deprecated: use `--format json`) |
+| `--format` | | `text` | Output format: `text`, `json`, `markdown` |
 | `--threshold` | `-t` | `0` | Minimum coverage percentage (exit 1 if below) |
 | `--quiet` | `-q` | `false` | Suppress output, only check threshold |
 
@@ -128,6 +132,13 @@ if [ $? -ne 0 ]; then
   echo "❌ Coverage below threshold!"
   exit 1
 fi
+```
+
+### PR comments with Markdown output
+
+```bash
+covscan cover coverage.out --format markdown --all > coverage-report.md
+# The coverage-report.md can be posted as a PR comment
 ```
 
 ## Architecture
